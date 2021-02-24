@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { getRepository } from 'typeorm';
-import { Survey } from '../models/Survey';
+import { getCustomRepository } from 'typeorm';
+import { SurveysRepository } from '../repositories/SurveysRepository';
 
 class SurveyControler{
     async create(req: Request, res: Response){
         const {title, description} = req.body;
 
-        const surveyRepository = getRepository(Survey);
+        const surveyRepository = getCustomRepository(SurveysRepository);
 
         const surveyExists = await surveyRepository.findOne({ title });
 
@@ -23,6 +23,14 @@ class SurveyControler{
 
         /* console.log(body); */
         return res.json(survey);
+    }
+
+    async show(req: Request, res: Response){
+        const surveyRepository = getCustomRepository(SurveysRepository);
+
+        const all = await surveyRepository.find();
+
+        return res.json(all);
     }
 }
 
