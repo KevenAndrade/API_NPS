@@ -22,7 +22,7 @@ class SurveyControler{
         await surveyRepository.save(survey);
 
         /* console.log(body); */
-        return res.json(survey);
+        return res.status(201).json(survey);
     }
 
     async show(req: Request, res: Response){
@@ -30,7 +30,7 @@ class SurveyControler{
 
         const all = await surveyRepository.find();
 
-        return res.json(all);
+        return res.status(201).json(all);
     }
 }
 
