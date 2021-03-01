@@ -18,7 +18,7 @@ class SendmailController {
         const userExist = await userRepository.findOne({ email});
         const surveyExist = await surveyRepository.findOne({ id: survey_id });
         const user_didnt_anwser = await usersurveyRepository.findOne({
-            where: [{user_id: userExist.id}, {value: null}],
+            where: { user_id: userExist.id, value: null },
             relations: ["user", "survey"]
         });
 
@@ -27,7 +27,7 @@ class SendmailController {
             name: userExist.name,
             title:surveyExist.title,
             description:surveyExist.description,
-            user_id:userExist.id,
+            id:"",
             link: process.env.URL_MAIL,
         }
 
@@ -38,6 +38,7 @@ class SendmailController {
             return response.status(400).json({ error: "Survey not found. "});
         }
         if (user_didnt_anwser){
+            variables.id = user_didnt_anwser.id;
             await Sendmailservices.execute(email, surveyExist.title, variables, npsPath);
             return response.status(201).json(user_didnt_anwser);
         }
@@ -49,10 +50,10 @@ class SendmailController {
         });
 
         await usersurveyRepository.save(usersurvey);
+        variables.id = usersurvey.id;
 
         //send email
         
-
         await Sendmailservices.execute(email, surveyExist.title, variables, npsPath);
 
         return response.status(201).json(usersurvey);
