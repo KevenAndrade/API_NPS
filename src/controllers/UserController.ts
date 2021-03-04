@@ -1,10 +1,20 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import { UserRepository } from '../repositories/UserRepository';
+import * as yup from 'yup';
 
 class UserController{
     async create(reqquest: Request,response: Response){
         const {name, email} =reqquest.body;
+
+        const schema = yup.object().shape({
+            name: yup.string().required(),
+            email: yup.string().email().required()
+        })
+
+        if( !(await schema.isValid(reqquest.body))){
+            return response.status(400).json({error: "validation failed"})
+        }
 
         const userRepository = getCustomRepository(UserRepository);
 
